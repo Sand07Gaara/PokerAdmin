@@ -1,20 +1,21 @@
 // Get Cosmos Client
 import { CosmosClient } from "@azure/cosmos";
 
-const endpoint = process.env.COSMOS_URL;
-const key = process.env.COSMOS_KEY;
+class CosmosDB {
+  constructor() {}
+  endpoint = process.env.COSMOS_URL;
+  key = process.env.COSMOS_KEY;
+  connectionString = `AccountEndpoint=${this.endpoint};AccountKey=${this.key};`;
 
-const connectionString = `AccountEndpoint=${endpoint};AccountKey=${key};`;
+  client = new CosmosClient(this.connectionString);
 
-const client = new CosmosClient(connectionString);
-
-async function checkConnection() {
+  async checkConnection() {
     try {
-      const response = await client.getDatabaseAccount();
-      const databaseAccount = response?.resource;
+      const response = await this.client.getDatabaseAccount();
       const readableLocations = response?.resource?.readableLocations;
       if (readableLocations && readableLocations.length > 0) {
-        const databaseAccountEndpoint = (readableLocations[0] as any).databaseAccountEndpoint;
+        const databaseAccountEndpoint = (readableLocations[0] as any)
+          .databaseAccountEndpoint;
         console.log(`Connected to ${databaseAccountEndpoint}`);
       } else {
         console.error("Failed to get database account information");
@@ -23,5 +24,7 @@ async function checkConnection() {
       console.error("Failed to connect to Cosmos DB", error);
     }
   }
+}
 
-checkConnection();
+module.exports = new CosmosDB()
+
