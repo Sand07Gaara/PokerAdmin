@@ -5,7 +5,7 @@ const urlencodedParser = bodyParser.urlencoded({ extended: true });
 const cors = require('cors') // HTTP headers (enable requests)
 const {ORIGIN} = require('../constants')
 // initialize app
-export const app = express()
+const app = express()
 
 // middlewares
 app.use(cors({origin: ORIGIN}))
