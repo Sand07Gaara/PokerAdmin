@@ -71,6 +71,25 @@ class CosmosDB {
 
     console.log(token, "--------- token");
   }
+
+  async findUserByEmail(email : string) {
+
+    const container = await this.createContainer();
+
+    const querySpec = {
+      query: "SELECT * FROM c WHERE c.email = @email",
+      parameters: [
+        {
+          name: "@email",
+          value: email,
+        },
+      ],
+    };
+  
+    const { resources } = await container.items.query(querySpec).fetchAll();
+    return resources[0];
+  }
+  
 }
 
 module.exports = new CosmosDB();

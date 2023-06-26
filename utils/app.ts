@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import * as bodyParser from 'body-parser';
+import * as bodyParser from "body-parser"
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 const cors = require('cors') // HTTP headers (enable requests)
@@ -10,7 +10,8 @@ const app = express()
 // middlewares
 app.use(cors({origin: ORIGIN}))
 app.use(urlencodedParser) // body parser
-app.use(express.urlencoded({extended: false})) // url parser
+app.use(express.json())
+// app.use(bodyParser.json());
 
 // // error handling
 app.use((err : Error, req : Request, res : Response, next : NextFunction) => {
