@@ -30,5 +30,10 @@ export interface updateTournamentRes {
 
 export interface DeleteTournamentRes {
   message: string;
-  data: object
+  data: object;
+}
+
+export interface GetTournamentListRes {
+  message: string;
+  data: Tournament[];
 }
