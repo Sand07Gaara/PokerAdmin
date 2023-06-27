@@ -11,7 +11,6 @@ const app = express()
 app.use(cors({origin: ORIGIN}))
 app.use(urlencodedParser) // body parser
 app.use(express.json())
-// app.use(bodyParser.json());
 
 // // error handling
 app.use((err : Error, req : Request, res : Response, next : NextFunction) => {

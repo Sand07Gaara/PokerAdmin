@@ -1,9 +1,10 @@
 import express from 'express';
 import { authorizeBearerToken } from '../../middlewares/auth';
-import { create } from '../../controllers/tournament/create'; 
+import * as tournamentController from '../../controllers/tournament';
 
 const router = express.Router();
 
-router.post('/create', authorizeBearerToken, create);
+router.post('/create', authorizeBearerToken, tournamentController.create);
+router.post('/update', authorizeBearerToken, tournamentController.update);
 
 module.exports = router;

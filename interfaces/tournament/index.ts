@@ -22,3 +22,8 @@ export interface CreateTournamentRes {
     message : string;
     data : object;
 }
+
+export interface updateTournamentRes {
+    message : string;
+    data : object;
+}
