@@ -3,24 +3,18 @@ import { Tournament } from "../../../interfaces/tournament";
 
 const cosmos = require("../../../utils/cosmos");
 
-const containerID = "tournament";
-
-export const update = async (
-  req: Request<{ name: string }, {}, Partial<Tournament>>,
-  res: Response
-) => {
-  const { name } = req.params;
+export const update = async (req: Request, res: Response) => {
+  const { id } = req.body;
   const tournamentUpdates: Partial<Tournament> = req.body;
 
   try {
-    const container = await cosmos.getContainer(containerID);
-    const { resource: existingTournament } = await container
-      .item(name, name)
-      .fetch();
+    const container = await cosmos.getContainer("tournament");
 
+    // Check if tournament exists
+    const { resource: existingTournament } = await container.item(id).read();
     if (!existingTournament) {
       return res.status(404).json({
-        message: "Tournament not found.",
+        message: "Tournament not found",
         data: {},
       });
     }
@@ -29,18 +23,17 @@ export const update = async (
 
     const { resource: result } = await container.items.upsert(
       updatedTournament,
-      { partitionKey: name }
+      { partitionKey: id }
     );
 
     return res.status(200).json({
       message: "Tournament updated successfully.",
       data: result,
     });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      message: "Error updating tournament.",
-      data: {},
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting tournament",
+      data: error as { id: string; name: string },
     });
   }
 };
