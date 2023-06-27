@@ -15,6 +15,7 @@ class CosmosDB {
 
   client = new CosmosClient(this.connectionString);
 
+  ////////////////////check cosmos db connection
   async checkConnection() {
     try {
       const response = await this.client.getDatabaseAccount();
@@ -31,6 +32,7 @@ class CosmosDB {
     }
   }
 
+  /////////////////create a DB
   async createDB() {
     const { database } = await this.client.databases.createIfNotExists({
       id: this.databaseID,
@@ -41,18 +43,17 @@ class CosmosDB {
     return database;
   }
 
-  async createContainer() {
+  //////////////////create a container
+  async createContainer(containerID: string) {
     const { container } = await this.client
       .database(this.databaseID)
-      .containers.createIfNotExists({ id: this.containerID });
-    console.log(`Created container: ${container.id}`);
+      .containers.createIfNotExists({ id: containerID });
     return container;
   }
 
+  ///////////////////create a user
   async createUser(user: AuthRegisterReq) {
-
-    console.log('----')
-    const container = await this.createContainer();
+    const container = await this.createContainer(this.containerID);
 
     // const { container } = await this.client
     //   .database(this.databaseID)
@@ -69,12 +70,10 @@ class CosmosDB {
 
     const token = signToken({ email: user.email, password: user.password });
 
-    console.log(token, "--------- token");
   }
-
-  async findUserByEmail(email : string) {
-
-    const container = await this.createContainer();
+  //////////////////// find with email
+  async findUserByEmail(email: string) {
+    const container = await this.createContainer(this.containerID);
 
     const querySpec = {
       query: "SELECT * FROM c WHERE c.email = @email",
@@ -85,11 +84,32 @@ class CosmosDB {
         },
       ],
     };
-  
+
     const { resources } = await container.items.query(querySpec).fetchAll();
     return resources[0];
   }
-  
+
+  //////////////////find one with query
+  async findOne(property: string, value: any, containerID: string) {
+    const query = {
+      query: `SELECT * FROM c WHERE c.${property} = @value`,
+      parameters: [
+        {
+          name: "@value",
+          value: value,
+        },
+      ],
+    };
+
+    const container = await this.createContainer(containerID);
+    const { resources } = await container.items.query(query).fetchAll();
+
+    if (resources.length > 0) {
+      return resources[0];
+    } else {
+      return null;
+    }
+  }
 }
 
 module.exports = new CosmosDB();

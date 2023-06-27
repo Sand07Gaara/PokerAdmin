@@ -8,7 +8,6 @@ const cosmos = require("../../../utils/cosmos");
 export const login = async (req: Request, res: Response<AuthLoginRes>) => {
   try {
     const { email, password } = req.body;
-    console.log( req.body,'-----------')
 
     if (!email || !password) {
 
@@ -22,7 +21,7 @@ export const login = async (req: Request, res: Response<AuthLoginRes>) => {
     const user = await cosmos.findUserByEmail(email);
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         message: "Invalid email or password",
         data: {},
         token: "",
@@ -31,9 +30,7 @@ export const login = async (req: Request, res: Response<AuthLoginRes>) => {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    console.log(password, '----req pass', user.password, '------db pass')
     if (!passwordMatch) {
-      console.log('----------here')
       return res.status(401).json({
         message: "Invalid email or password",
         data: {},

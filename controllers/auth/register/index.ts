@@ -9,12 +9,11 @@ const containerID = "admin_user";
 
 const user: AuthRegisterReq = {
   email: "yutahamaguchi@nadja.biz",
-  password: "",
+  password: "123qwe!@#QWE",
 };
 
 export async function createUser(user: AuthRegisterReq) {
 
-    console.log('----')
     const { container } = await cosmos.client
       .database(databaseID)
       .container(containerID);
@@ -26,9 +25,7 @@ export async function createUser(user: AuthRegisterReq) {
     // const newUser = new User({ email: username, password: hashedPassword, email: email, role: role });
 
     const { resource } = await container.items.create(user);
-    console.log(`Created user with id: ${resource.id}`);
 
     const token = signToken({ email: user.email, password: user.password });
 
-    console.log(token, "--------- token");
   }
