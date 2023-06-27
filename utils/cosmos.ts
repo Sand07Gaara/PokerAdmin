@@ -51,26 +51,6 @@ class CosmosDB {
     return container;
   }
 
-  ///////////////////create a user
-  async createUser(user: AuthRegisterReq) {
-    const container = await this.createContainer(this.containerID);
-
-    // const { container } = await this.client
-    //   .database(this.databaseID)
-    //   .container(this.containerID);
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(user.password, salt);
-
-    user.password = hashedPassword;
-    // const newUser = new User({ email: username, password: hashedPassword, email: email, role: role });
-
-    const { resource } = await container.items.create(user);
-    console.log(`Created user with id: ${resource?.id}`);
-
-    const token = signToken({ email: user.email, password: user.password });
-
-  }
   //////////////////// find with email
   async findUserByEmail(email: string) {
     const container = await this.createContainer(this.containerID);
@@ -109,6 +89,19 @@ class CosmosDB {
     } else {
       return null;
     }
+  }
+  ///////////////////// get container 
+
+  async getContainer(containerID : string) {
+    const { database } = await this.client.databases.createIfNotExists({
+      id: this.databaseID,
+    });
+
+    const { container } = await database.containers.createIfNotExists({
+      id: containerID,
+    });
+
+    return container;
   }
 }
 

@@ -59,11 +59,11 @@ export const create = async (
         data: {},
       });
     } else {
-      const { resource } = await container.items.create(tournament);
+      const { resource : result } = await container.items.create(tournament);
 
       res.status(200).json({
         message: "Successfully created",
-        data: tournament,
+        data: result,
       });
     }
   } catch (error) {
