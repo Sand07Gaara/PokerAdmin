@@ -1,9 +1,8 @@
 import express from 'express';
-import { login } from '../../controllers/auth/login';
-import { authorizeBearerToken } from '../../middlewares/auth';
+import * as authController from '../../controllers/auth';
 
 const router = express.Router();
 
-router.post('/login', login);
+router.post('/login', authController.login);
 
 module.exports = router;
