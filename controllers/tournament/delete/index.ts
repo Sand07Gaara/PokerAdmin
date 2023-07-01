@@ -9,6 +9,12 @@ export const remove = async (
 ) => {
   const { id } = req.body;
 
+  if(!id) {
+    return res.status(400).json({
+      message: "ID required",
+      data : {}
+    });
+  }
   try {
     const container = await cosmos.getContainer("tournament");
 

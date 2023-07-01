@@ -3,8 +3,6 @@ import { CosmosClient, Item } from "@azure/cosmos";
 import { AuthRegisterReq } from "../interfaces/auth/register";
 import { signToken } from "../middlewares/auth/index";
 
-const bcrypt = require("bcrypt");
-
 class CosmosDB {
   constructor() {}
   endpoint = process.env.COSMOS_URL;
@@ -19,11 +17,11 @@ class CosmosDB {
   async checkConnection() {
     try {
       const response = await this.client.getDatabaseAccount();
-      const readableLocations = response?.resource?.readableLocations;
+      const readableLocations = response && response.resource && response.resource.readableLocations;
       if (readableLocations && readableLocations.length > 0) {
         const databaseAccountEndpoint = (readableLocations[0] as any)
           .databaseAccountEndpoint;
-        console.log(`Connected to ${databaseAccountEndpoint}`);
+        console.log(`✅ Connected to ${databaseAccountEndpoint}`);
       } else {
         console.error("Failed to get database account information");
       }

@@ -1,13 +1,12 @@
-import express, { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 require("dotenv").config(); // Secures variables
 
 const app = require("./utils/app"); // Backend App (server)
 const cosmos = require("./utils/cosmos"); // Cosmos DB
+const mongo = require("./utils/mongo"); // MongoDB
 const Routes = require("./routes");
 const cors = require("cors");
 const { PORT } = require("./constants");
-
-cosmos.checkConnection();
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -19,6 +18,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use("/api", Routes);
 app.use(cors());
 
+cosmos.checkConnection();
+mongo.connect(); // Check MongoDB connection
 
 var http = require("http").createServer(app);
 
