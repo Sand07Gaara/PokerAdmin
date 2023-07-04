@@ -40,9 +40,15 @@ export const login = async (req: Request, res: Response<AuthLoginRes>) => {
 
     const token = signToken({ userId: user.id });
 
+    const resdata = {
+      name : user.name,
+      email : user.email,
+      role : user.role
+    }
+
     res.status(200).json({
       message: "Successfully logged in",
-      data: {},
+      data: resdata,
       token: token,
     });
   } catch (error) {
