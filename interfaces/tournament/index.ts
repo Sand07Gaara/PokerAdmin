@@ -37,3 +37,4 @@ export interface GetTournamentListRes {
   message: string;
   data: Tournament[];
 }
+
