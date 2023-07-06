@@ -41,7 +41,7 @@ export const create = async (req: Request, res: Response) => {
     console.error(error);
     return res.status(500).json({
       message: "Failed to create Game type",
-      error,
+      data: error,
     });
   }
 };

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { DeleteTournamentRes } from "../../../interfaces/tournament";
 
 const cosmos = require("../../../utils/cosmos");
 
@@ -7,25 +6,25 @@ export const remove = async (req: Request, res: Response) => {
   const { id } = req.body;
 
   try {
-    const container = await cosmos.getContainer("tournament_type");
+    const container = await cosmos.getContainer("hand_history");
 
-    // Check if tournament type exists
-    const { resource: tournament_type } = await container.item(id).read();
-    if (!tournament_type) {
+    // Check if hand history exists
+    const { resource: hand_history } = await container.item(id).read();
+    if (!hand_history) {
       return res.status(404).json({
-        message: "Tournament type not found",
+        message: "Hand history not found",
       });
     }
 
     const { resource } = await container.item(id).delete();
 
     return res.status(200).json({
-      message: "Tournament type deleted successfully",
+      message: "Hand history deleted successfully",
       data: resource,
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Error deleting tournament type",
+      message: "Error deleting hand history",
       data: error,
     });
   }

@@ -26,7 +26,7 @@ export const getCounts = async (req: Request, res: Response) => {
       .fetchAll();
 
     // Return the counts
-    res.status(200).json({
+    return res.status(200).json({
       message: "User counts retrieved successfully",
       data: {
         userCountToday: counts[0].userCountToday,
@@ -36,7 +36,7 @@ export const getCounts = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error retrieving users count",
       data: error,
     });

@@ -10,20 +10,16 @@ export const update = async (req: Request, res: Response) => {
   try {
     const container = await cosmos.getContainer("tournament_type");
 
-    // Check if tournament exists
-    const { resource: existingTournamentType } = await container
-      .item(id)
-      .read();
+    // Check if tournament_type exists
+    const { resource: existingTournamentType } = await container.item(id).read();
+    
     if (!existingTournamentType) {
       return res.status(404).json({
         message: "Tournament Type not found",
       });
     }
 
-    const updatedTournamentType = {
-      ...existingTournamentType,
-      ...tournamentTypeUpdates,
-    };
+    const updatedTournamentType = { ...existingTournamentType, ...tournamentTypeUpdates };
 
     const { resource: result } = await container.items.upsert(
       updatedTournamentType,
@@ -37,7 +33,7 @@ export const update = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error update tournament type",
-      data: error as { id: string; name: string },
+      data: error,
     });
   }
 };

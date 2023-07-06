@@ -3,7 +3,7 @@ import { ListRes, PlayerInfo } from "../../../interfaces/user";
 
 const cosmos = require("../../../utils/cosmos");
 
-export const getList = async (req: Request, res: Response<ListRes>) => {
+export const getList = async (req: Request, res: Response) => {
   const pageNum = parseInt(req.body.pageNum as string) || 1;
   const rowsPerPage = parseInt(req.body.rowsPerPage as string) || 10;
 
@@ -12,7 +12,7 @@ export const getList = async (req: Request, res: Response<ListRes>) => {
   try {
     const container = await cosmos.getContainer("nadja");
 
-    // Query tournaments with pagination and select necessary properties
+    // Query user with pagination and select necessary properties
     const { resources: users, headers } = await container.items
       .query({
         query:
@@ -24,14 +24,14 @@ export const getList = async (req: Request, res: Response<ListRes>) => {
       })
       .fetchAll();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User list retrieved successfully",
-      data: users as PlayerInfo[],
+      data: users,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error retrieving user list",
-      data: [],
+      data: error,
     });
   }
 };

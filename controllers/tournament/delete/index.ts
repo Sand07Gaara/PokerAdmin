@@ -1,12 +1,8 @@
 import { Request, Response } from "express";
-import { DeleteTournamentRes } from "../../../interfaces/tournament";
 
 const cosmos = require("../../../utils/cosmos");
 
-export const remove = async (
-  req: Request,
-  res: Response<DeleteTournamentRes>
-) => {
+export const remove = async (req: Request, res: Response) => {
   const { id } = req.body;
 
   try {
@@ -17,7 +13,6 @@ export const remove = async (
     if (!tournament) {
       return res.status(404).json({
         message: "Tournament not found",
-        data: {},
       });
     }
 
@@ -30,7 +25,7 @@ export const remove = async (
   } catch (error) {
     return res.status(500).json({
       message: "Error deleting tournament",
-      data: error as { id: string; name: string },
+      data: error,
     });
   }
 };

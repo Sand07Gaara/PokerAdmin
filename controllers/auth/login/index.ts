@@ -12,8 +12,6 @@ export const login = async (req: Request, res: Response) => {
     if (!email || !password) {
       return res.status(400).json({
         message: "Email and password are required",
-        data: {},
-        token: "",
       });
     }
 
@@ -50,6 +48,7 @@ export const login = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
+      data: error
     });
   }
 };

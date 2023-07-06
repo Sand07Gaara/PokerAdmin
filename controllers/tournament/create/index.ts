@@ -1,39 +1,33 @@
 import { Request, Response } from "express";
-import {
-  CreateTournamentRes,
-  Tournament,
-} from "../../../interfaces/tournament";
+import { Tournament } from "../../../interfaces/tournament";
 import Joi from "joi";
 
 const cosmos = require("../../../utils/cosmos");
 
 const containerID = "tournament";
 
-export const create = async (
-  req: Request<Tournament>,
-  res: Response<CreateTournamentRes>
-) => {
+export const create = async (req: Request<Tournament>, res: Response) => {
   const tournament: Tournament = req.body;
 
   const schema = Joi.object({
     name: Joi.string().required(),
-    admin_user : Joi.string().required(),
-    type: Joi.string().required(),
-    gameType: Joi.string().required(),
-    buyInAmount: Joi.number().required(),
-    registrationStart: Joi.date().required(),
-    registrationEnd: Joi.date().required(),
-    playerLimit: Joi.number().required(),
-    startingChipCount: Joi.number().required(),
-    prizeStructure: Joi.string().required(),
-    tournamentStartTime: Joi.date().required(),
-    levelDuration: Joi.number().required(),
-    startingBlinds: Joi.string().required(),
-    blindIncreaseSchedule: Joi.string().required(),
-    lateRegistration: Joi.number().required(),
-    isRebuyable: Joi.boolean().required(),
+    admin_user_id: Joi.string().required(),
+    tournament_type_id: Joi.string().required(),
+    game_type_id: Joi.string().required(),
+    buy_in_amount: Joi.number().required(),
+    registration_start: Joi.date().required(),
+    registration_end: Joi.date().required(),
+    player_limit: Joi.number().required(),
+    starting_chip_count: Joi.number().required(),
+    prize_structure: Joi.string().required(),
+    tournament_start_time: Joi.date().required(),
+    level_duration: Joi.number().required(),
+    starting_blinds: Joi.string().required(),
+    blind_increase_schedule: Joi.string().required(),
+    late_registration: Joi.number().required(),
+    is_rebuyable: Joi.boolean().required(),
     breaks: Joi.number().required(),
-    blindIncreaseInterval: Joi.number().required(),
+    blind_increase_interval: Joi.number().required(),
   });
 
   const { error } = schema.validate(tournament);
@@ -41,7 +35,6 @@ export const create = async (
   if (error) {
     return res.status(400).json({
       message: error.details[0].message,
-      data: {},
     });
   }
 
@@ -57,7 +50,6 @@ export const create = async (
     if (tournamentIsExist) {
       return res.status(400).json({
         message: `Tournament of name ${tournament.name} is exist.`,
-        data: {},
       });
     } else {
       const { resource: result } = await container.items.create(tournament);
@@ -70,7 +62,7 @@ export const create = async (
   } catch (error) {
     return res.status(500).json({
       message: "Failed to create tournament",
-      data: {},
+      data: error,
     });
   }
 };

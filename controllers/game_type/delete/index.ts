@@ -8,7 +8,7 @@ export const remove = async (req: Request, res: Response) => {
   try {
     const container = await cosmos.getContainer("game_type");
 
-    // Check if game exists
+    // Check if game type exists
     const { resource: game_type } = await container.item(id).read();
     if (!game_type) {
       return res.status(404).json({
@@ -20,12 +20,11 @@ export const remove = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Game type deleted successfully",
-      data: resource,
     });
   } catch (error) {
     return res.status(500).json({
       message: "Error deleting game type",
-      data: error as { id: string; name: string },
+      data: error,
     });
   }
 };

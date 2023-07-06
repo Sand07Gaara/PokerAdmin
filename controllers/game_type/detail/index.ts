@@ -22,7 +22,7 @@ export const detail = async (req: Request, res: Response) => {
       .query(querySpec)
       .fetchAll();
 
-    // Check if user exists
+    // Check if game type exists
     if (items.length === 0) {
       return res.status(404).json({
         message: "Game not found",
@@ -36,7 +36,7 @@ export const detail = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error retrieving game",
-      data: error as { id: string },
+      data: error,
     });
   }
 };

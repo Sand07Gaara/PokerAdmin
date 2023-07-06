@@ -1,6 +1,6 @@
 export interface Tournament {
   name: string;
-  admin_user : string;
+  admin_user_id : string;
   type: string;
   gameType: string;
   buyInAmount: number;

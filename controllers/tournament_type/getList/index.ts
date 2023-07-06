@@ -8,7 +8,7 @@ export const getList = async (req: Request, res: Response) => {
 
     const { resources: tournament_types } = await container.items
       .query({
-        query: "SELECT * FROM c OFFSET",
+        query: "SELECT * FROM c",
       })
       .fetchAll();
 
@@ -19,7 +19,7 @@ export const getList = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error retrieving tournament types",
-      data: [],
+      data: error,
     });
   }
 };

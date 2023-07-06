@@ -10,10 +10,8 @@ export const update = async (req: Request, res: Response) => {
   try {
     const container = await cosmos.getContainer("game_type");
 
-    // Check if game exists
-    const { resource: existingGameType } = await container
-      .item(id)
-      .read();
+    // Check if game type exists
+    const { resource: existingGameType } = await container.item(id).read();
     if (!existingGameType) {
       return res.status(404).json({
         message: "Game Type not found",
@@ -25,10 +23,9 @@ export const update = async (req: Request, res: Response) => {
       ...gameTypeUpdates,
     };
 
-    const { resource: result } = await container.items.upsert(
-        updatedGameType,
-      { partitionKey: id }
-    );
+    const { resource: result } = await container.items.upsert(updatedGameType, {
+      partitionKey: id,
+    });
 
     return res.status(200).json({
       message: "Game Type updated successfully.",
@@ -37,7 +34,7 @@ export const update = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error update Game type",
-      data: error as { id: string; name: string },
+      data: error,
     });
   }
 };

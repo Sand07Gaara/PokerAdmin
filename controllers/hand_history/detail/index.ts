@@ -6,7 +6,7 @@ export const detail = async (req: Request, res: Response) => {
   const { id } = req.body;
 
   try {
-    const container = await cosmos.getContainer("nadja");
+    const container = await cosmos.getContainer("hand_history");
 
     const querySpec = {
       query: "SELECT * FROM c WHERE c.id = @id",
@@ -22,20 +22,20 @@ export const detail = async (req: Request, res: Response) => {
       .query(querySpec)
       .fetchAll();
 
-    // Check if user exists
+    // Check if hand_history exists
     if (items.length === 0) {
       return res.status(404).json({
-        message: "User not found",
+        message: "Hand history not found",
       });
     } else {
       return res.status(200).json({
-        message: "Retrieve user successfully",
+        message: "Retrieve hand history successfully",
         data: items,
       });
     }
   } catch (error) {
     return res.status(500).json({
-      message: "Error retrieving user",
+      message: "Error retrieving hand history",
       data: error,
     });
   }
