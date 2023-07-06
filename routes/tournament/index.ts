@@ -8,5 +8,6 @@ router.post('/create', authorizeBearerToken, tournamentController.create);
 router.patch('/update', authorizeBearerToken, tournamentController.update);
 router.delete('/:id', authorizeBearerToken, tournamentController.remove);
 router.get('/getlist', authorizeBearerToken, tournamentController.getList);
+router.post('/detail', authorizeBearerToken, tournamentController.detail);
 
 module.exports = router;

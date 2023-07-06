@@ -26,15 +26,12 @@ export const getList = async (
       })
       .fetchAll();
 
-    // Get total number of tournaments
-    const totalCount = headers["x-ms-item-count"];
-
-    res.status(200).json({
+    return res.status(200).json({
       message: "Tournaments retrieved successfully",
       data: tournaments,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error retrieving tournaments",
       data: [],
     });

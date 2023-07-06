@@ -17,6 +17,7 @@ export const create = async (
 
   const schema = Joi.object({
     name: Joi.string().required(),
+    admin_user : Joi.string().required(),
     type: Joi.string().required(),
     gameType: Joi.string().required(),
     buyInAmount: Joi.number().required(),
@@ -59,16 +60,15 @@ export const create = async (
         data: {},
       });
     } else {
-      const { resource : result } = await container.items.create(tournament);
+      const { resource: result } = await container.items.create(tournament);
 
-      res.status(200).json({
+      return res.status(200).json({
         message: "Successfully created",
         data: result,
       });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to create tournament",
       data: {},
     });

@@ -1,5 +1,6 @@
 export interface Tournament {
   name: string;
+  admin_user : string;
   type: string;
   gameType: string;
   buyInAmount: number;
@@ -38,3 +39,12 @@ export interface GetTournamentListRes {
   data: Tournament[];
 }
 
+export interface TournamentType {
+  name : string,
+  description : string
+}
+
+export interface GameType {
+  name : string,
+  description : string
+}

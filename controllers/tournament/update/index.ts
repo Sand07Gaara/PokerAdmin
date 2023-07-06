@@ -31,8 +31,8 @@ export const update = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Error deleting tournament",
+    return res.status(500).json({
+      message: "Error update tournament",
       data: error as { id: string; name: string },
     });
   }
