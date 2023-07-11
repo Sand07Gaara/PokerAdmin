@@ -1,22 +1,23 @@
-const mongoose = require("mongoose");
+const MongoClient = require("mongodb").MongoClient;
 
 class Cosmos_Mongo {
   constructor() {}
   connectionString = process.env.COSMOS_MONGO_CONNECTIONSTRING;
 
-  async connection() {
+  client = new MongoClient(this.connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
-    console.log(this.connectionString),
-    mongoose
-      .connect(this.connectionString, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
-      .then(() => console.log("Connected to Cosmos MongoDB API"))
-      .catch((err: any) =>
-        console.log("Error connecting to Cosmos MongoDB API: ", err)
-      );
+async connection() {
+  try {
+    await this.client.connect();
+    console.log("✅ Connected to Cosmos MongoDB API");
+  } catch (error) {
+    console.error("Failed to connect to Cosmos MongoDB API", error);
   }
+}
+
 }
 
 module.exports = new Cosmos_Mongo();

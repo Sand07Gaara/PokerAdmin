@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 const cosmos = require("../../../utils/cosmos");
 
 export const getList = async (req: Request, res: Response) => {
-  const pageNum = parseInt(req.body.pageNum as string) || 1;
-  const rowsPerPage = parseInt(req.body.rowsPerPage as string) || 10;
+  const page_num = parseInt(req.body.pageNum as string) || 1;
+  const rows_per_page = parseInt(req.body.rowsPerPage as string) || 10;
 
-  const skip = (pageNum - 1) * rowsPerPage;
+  const skip = (page_num - 1) * rows_per_page;
 
   try {
     const container = await cosmos.getContainer("tournament");
@@ -17,7 +17,7 @@ export const getList = async (req: Request, res: Response) => {
         query: "SELECT * FROM c OFFSET @skip LIMIT @limit",
         parameters: [
           { name: "@skip", value: skip },
-          { name: "@limit", value: rowsPerPage },
+          { name: "@limit", value: rows_per_page },
         ],
       })
       .fetchAll();
