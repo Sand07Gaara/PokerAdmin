@@ -3,11 +3,12 @@ import { Request, Response } from "express";
 const cosmos = require("../../../utils/cosmos");
 
 export const getList = async (req: Request, res: Response) => {
-  const page_num = parseInt(req.body.pageNum as string) || 1;
-  const rows_per_page = parseInt(req.body.rowsPerPage as string) || 10;
+  const page_num = parseInt(req.body.page_num as string) || 1;
+  const rows_per_page = parseInt(req.body.rows_per_page as string) || 10;
 
   const skip = (page_num - 1) * rows_per_page;
 
+  console.log(page_num, rows_per_page)
   try {
     const container = await cosmos.getContainer("tournament");
 
