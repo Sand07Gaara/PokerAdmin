@@ -8,6 +8,7 @@
     "start": "nodemon index.ts || node index.ts"
   },
   "dependencies": {
+    "@azure/communication-email": "^1.0.0",
     "@azure/cosmos": "^3.17.3",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",

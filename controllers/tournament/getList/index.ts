@@ -9,6 +9,7 @@ export const getList = async (req: Request, res: Response) => {
 
   const skip = (page_num - 1) * rows_per_page;
 
+  console.log(page_num, rows_per_page)
   try {
     const container = await cosmos.getContainer("tournament");
 

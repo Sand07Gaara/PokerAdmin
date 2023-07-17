@@ -1,39 +1,34 @@
 import { Request, Response } from "express";
 
-const cosmos = require("../../../utils/cosmos");
+const ObjectId = require("mongodb").ObjectId;
+const cosmos_mongo = require("../../../utils/cosmos_mongo");
+
+const databaseName = "nadja";
+const collectionName = "User_Data";
 
 export const detail = async (req: Request, res: Response) => {
   const { id } = req.body;
 
   try {
-    const container = await cosmos.getContainer("nadja");
 
-    const querySpec = {
-      query: "SELECT * FROM c WHERE c.id = @id",
-      parameters: [
-        {
-          name: "@id",
-          value: id,
-        },
-      ],
-    };
+    const db = cosmos_mongo.client.db(databaseName);
+    const collection = db.collection(collectionName);
 
-    const { resources: items } = await container.items
-      .query(querySpec)
-      .fetchAll();
+     const user = await collection.findOne({ _id: new ObjectId(id) });
 
     // Check if user exists
-    if (items.length === 0) {
+    if (!user) {
       return res.status(404).json({
         message: "User not found",
       });
     } else {
       return res.status(200).json({
         message: "Retrieve user successfully",
-        data: items,
+        data : user
       });
     }
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       message: "Error retrieving user",
       data: error,

@@ -1,28 +1,40 @@
 import { Request, Response } from "express";
-import { ListRes, PlayerInfo } from "../../../interfaces/user";
+const MongoClient = require("mongodb").MongoClient;
 
-const cosmos = require("../../../utils/cosmos");
+const connectionString = process.env.COSMOS_MONGO_CONNECTIONSTRING;
+const databaseName = "nadja";
+const collectionName = "User_Data";
 
 export const getList = async (req: Request, res: Response) => {
-  const pageNum = parseInt(req.body.pageNum as string) || 1;
-  const rowsPerPage = parseInt(req.body.rowsPerPage as string) || 10;
+  const page_num = parseInt(req.body.page_num as string) || 1;
+  const rows_per_page = parseInt(req.body.rows_per_page as string) || 10;
 
-  const skip = (pageNum - 1) * rowsPerPage;
+  const skip = (page_num - 1) * rows_per_page;
 
   try {
-    const container = await cosmos.getContainer("nadja");
+    const client = await MongoClient.connect(connectionString, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    const db = client.db(databaseName);
+    const collection = db.collection(collectionName);
 
     // Query user with pagination and select necessary properties
-    const { resources: users, headers } = await container.items
-      .query({
-        query:
-          "SELECT c.id, c.username, c.status, c.created_date, c.mail_date, c.spin_date, c.VTD, c.country FROM c OFFSET @skip LIMIT @limit",
-        parameters: [
-          { name: "@skip", value: skip },
-          { name: "@limit", value: rowsPerPage },
-        ],
+    const users = await collection
+      .find()
+      .project({
+        id: 1,
+        username: 1,
+        status: 1,
+        created_date: 1,
+        mail_date: 1,
+        spin_date: 1,
+        VTD: 1,
+        country: 1,
       })
-      .fetchAll();
+      .skip(skip)
+      .limit(rows_per_page)
+      .toArray();
 
     return res.status(200).json({
       message: "User list retrieved successfully",
