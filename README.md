@@ -62,26 +62,58 @@ The following APIs are available:
 The server stores tournament data in a Cosmos DB NoSQL database. User data are being stored in Cosmos MongoDB by user side.
 
 ```
-  Tournament Data
-  
+  Tournament
+
   {
     "name": string,
-    "tournament_type_id": string(objectID),
-    "game_type_id": string(objectID),
-    "buy_in_amount": number,
-    "registration_start":  Date and Time
-    "registration_end": Date and Time 
-    "player_limit": number,
-    "starting_chip_count": number,
-    "prize_structure": number,
-    "tournament_start_time": Date and Time,
-    "level_duration": number,
-    "starting_blinds": number,
-    "blind_increase_schedule": number,
-    "late_registration": number,
-    "breaks": number,
-    "is_rebuyable": boolean,
-    "blind_increase_interval": number,
-    "admin_user_id": string(objectID),
+    "tournament_type_id":        string(objectID),
+    "game_type_id":              string(objectID),
+    "buy_in_amount":             number,
+    "registration_start":        Date and Time
+    "registration_end":          Date and Time
+    "player_limit":              number,
+    "starting_chip_count":       number,
+    "prize_structure":           number,
+    "tournament_start_time":     Date and Time,
+    "level_duration":            number,
+    "starting_blinds":           number,
+    "blind_increase_schedule":   number,
+    "late_registration":         number,
+    "breaks":                    number,
+    "is_rebuyable":              boolean,
+    "blind_increase_interval":   number,
+    "registered_user":           Array of string,
+    "admin_user_id":             string(objectID),
   }
+```
+
+```
+  Tournament Type
+
+  {
+    "name":       string,
+    "descrition": string,
+  }
+```
+
+```
+  Game Type
+
+  {
+    "name":       string,
+    "descrition": string,
+  }
+```
+
+```
+   Hand History
+
+   {
+      tournament_id :   string (objectID),
+      user_id :         string (objectID) (winner),
+      cards_dealt :     Array of Strings,
+      actions_taken :   Array of Strings,
+      start_time :      Date and Time,
+      end_time :        Date and Time
+   }
 ```
