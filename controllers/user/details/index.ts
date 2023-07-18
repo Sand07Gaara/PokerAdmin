@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 const MongoClient = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectId;
 
 const connectionString = process.env.COSMOS_MONGO_CONNECTIONSTRING;
 const databaseName = "nadja";
@@ -18,9 +19,9 @@ export const details = async (req: Request, res: Response) => {
 
     // Query user with pagination and select necessary properties
     const users = await collection
-      .find({ id: { $in: ids } })
+      .find({ _id: { $in: ids.map((id: string) => new ObjectId(id)) } })
       .project({
-        id: 1,
+        _id: 0,
         username: 1,
         status: 1,
         created_date: 1,
