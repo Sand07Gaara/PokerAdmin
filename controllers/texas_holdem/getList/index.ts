@@ -10,12 +10,13 @@ export const getList = async (req: Request, res: Response) => {
   const skip = (page_num - 1) * rows_per_page;
 
   try {
-    const container = await cosmos.getContainer("tournament");
+    const container = await cosmos.getContainer("texas_holdem");
 
-    // Query tournaments with pagination and search
-    const { resources: tournaments, headers } = await container.items
+    /////////////////???????????
+    // Query texas hold'em with pagination and search
+    const { resources: texas_holdem, headers } = await container.items
       .query({
-        query: "SELECT * FROM c WHERE CONTAINS(c.name, @search_string) OFFSET @skip LIMIT @limit",
+        query: "SELECT * FROM c WHERE CONTAINS(c.table_name, @search_string) OFFSET @skip LIMIT @limit",
         parameters: [
           { name: "@search_string", value: search_string },
           { name: "@skip", value: skip },
@@ -24,7 +25,7 @@ export const getList = async (req: Request, res: Response) => {
       })
       .fetchAll();
 
-    // Get total count of tournaments
+    // Get total count of texas_holdem
     const { resources: count } = await container.items
       .query({
         query: "SELECT VALUE COUNT(1) FROM c",
@@ -35,13 +36,13 @@ export const getList = async (req: Request, res: Response) => {
       .fetchAll();
 
     return res.status(200).json({
-      message: "Tournaments retrieved successfully",
-      data: tournaments,
+      message: "Texas Hold'em retrieved successfully",
+      data: texas_holdem,
       total_count: count[0],
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Error retrieving tournaments",
+      message: "Error retrieving texas_holdem",
       data: error,
     });
   }

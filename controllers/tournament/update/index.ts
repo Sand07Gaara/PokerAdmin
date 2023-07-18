@@ -15,7 +15,6 @@ export const update = async (req: Request, res: Response) => {
     if (!existingTournament) {
       return res.status(404).json({
         message: "Tournament not found",
-        data: {},
       });
     }
 
@@ -33,7 +32,7 @@ export const update = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error update tournament",
-      data: error as { id: string; name: string },
+      data: error 
     });
   }
 };
