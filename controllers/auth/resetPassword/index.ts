@@ -1,29 +1,29 @@
-import { Request, Response } from "express";
-import crypto from "crypto";
+import { Request, Response } from 'express';
+import crypto from 'crypto';
 
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
+const cosmos = require('../../../utils/cosmos');
 
-const cosmos = require("../../../utils/cosmos");
+const secretKey = 'mysecretkey';
+
+const decodeEmail = (encodedEmail: string, iv: Buffer) => {
+  const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, iv);
+  let decodedEmail = decipher.update(encodedEmail, 'base64', 'utf8');
+  decodedEmail += decipher.final('utf8');
+  return decodedEmail;
+};
 
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const { encode, password } = req.body;
+    const { email, password, iv } = req.body;
 
-    if (!encode || !password) {
+    if (!email || !password || !iv) {
       return res.status(400).json({
-        message: "Password is required",
+        message: 'password is required',
       });
     }
 
-    const iv = crypto.randomBytes(16);
-
-    const secretKey = process.env.MANUAL_SECRET_KEY || "secret";
-
-    const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
-
-    let decodedEmail = decipher.update(encode, "base64", "utf8");
-
-    decodedEmail += decipher.final("utf8");
+    const decodedEmail = decodeEmail(email, Buffer.from(iv, 'base64'));
 
     const user = await cosmos.findUserByEmail(decodedEmail);
 

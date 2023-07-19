@@ -2,10 +2,18 @@ import { Request, Response } from "express";
 import crypto from "crypto";
 
 const { sendEmail } = require("../../../utils/email");
-const bcrypt = require("bcrypt");
 const cosmos = require("../../../utils/cosmos");
-
 const { baseClientUrl } = require("../../../constants");
+
+const secretKey = "mysecretkey";
+
+const encodeEmail = (email: string) => {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
+  let encodedEmail = cipher.update(email, "utf8", "base64");
+  encodedEmail += cipher.final("base64");
+  return { encodedEmail, iv };
+};
 
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
@@ -25,17 +33,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const secretKey = process.env.MANUAL_SECRET_KEY || "";
+    const { encodedEmail, iv } = encodeEmail(email);
 
-    const iv = crypto.randomBytes(16);
-    
-    const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
-
-    let encodedEmail = cipher.update(email, "utf8", "base64");
-    
-    encodedEmail += cipher.final("base64");
-
-    const url = baseClientUrl + "/api/" + `#${encodedEmail}`;
+    const resetLink = `${baseClientUrl}/reset-password?email=${encodeURIComponent(
+      encodedEmail
+    )}&iv=${encodeURIComponent(iv.toString("base64"))}`;
 
     const subject = "Forgot password.";
 
@@ -50,7 +52,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
                 <br>
                 <div style="height: 40px; width: 150px; background-color: SlateBlue;">
                   <div style="height: 10px"/>
-                  <a style="font-size: 15px; font-family: arial; color: white" href = ${url}>Reset Password</a>
+                  <a style="font-size: 15px; font-family: arial; color: white" href="${resetLink}">Reset Password</a>
                 </div>
               </center>
             </footer>
@@ -58,25 +60,21 @@ export const forgotPassword = async (req: Request, res: Response) => {
         </body>
       </html>`;
 
-    const emailRes = await sendEmail(
-      "esaibrilliant34310@gmail.com",
-      subject,
-      content
-    );
+    const emailRes = await sendEmail(email, subject, content);
 
-    if (emailRes == 200) {
+    if (emailRes === 200) {
       return res.status(200).json({
-        message: "Sent successfully",
+        message: "Password reset link sent to email",
       });
     } else {
-      return res.status(401).json({
-        message: "Send email error",
+      return res.status(500).json({
+        message: "Failed to send password reset link",
       });
     }
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       message: "Internal server error",
-      data: error,
     });
   }
 };
