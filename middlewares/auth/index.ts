@@ -6,6 +6,11 @@ export const signToken = (payload = {}, expiresIn = '12h') => {
   return token
 }
 
+export const passwordToken = (payload = {}, expiresIn = '10min') => {
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn })
+  return token
+}
+
 export const authorizeBearerToken = async (request : any, response : any, next : any) => {
   try {
     const token = request.headers.authorization && request.headers.authorization.split(' ')[1];

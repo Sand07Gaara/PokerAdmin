@@ -4,28 +4,17 @@ import crypto from 'crypto';
 const bcrypt = require('bcrypt');
 const cosmos = require('../../../utils/cosmos');
 
-const secretKey = 'mysecretkey';
-
-const decodeEmail = (encodedEmail: string, iv: Buffer) => {
-  const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, iv);
-  let decodedEmail = decipher.update(encodedEmail, 'base64', 'utf8');
-  decodedEmail += decipher.final('utf8');
-  return decodedEmail;
-};
-
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const { email, password, iv } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !iv) {
+    if (!email || !password ) {
       return res.status(400).json({
         message: 'password is required',
       });
     }
 
-    const decodedEmail = decodeEmail(email, Buffer.from(iv, 'base64'));
-
-    const user = await cosmos.findUserByEmail(decodedEmail);
+    const user = await cosmos.findUserByEmail(email);
 
     if (!user) {
       return res.status(404).json({

@@ -1,19 +1,9 @@
 import { Request, Response } from "express";
-import crypto from "crypto";
+import { passwordToken } from "../../../middlewares/auth";
 
 const { sendEmail } = require("../../../utils/email");
 const cosmos = require("../../../utils/cosmos");
 const { baseClientUrl } = require("../../../constants");
-
-const secretKey = "mysecretkey";
-
-const encodeEmail = (email: string) => {
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
-  let encodedEmail = cipher.update(email, "utf8", "base64");
-  encodedEmail += cipher.final("base64");
-  return { encodedEmail, iv };
-};
 
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
@@ -33,11 +23,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const { encodedEmail, iv } = encodeEmail(email);
+    const token = passwordToken({ email });
 
-    const resetLink = `${baseClientUrl}/reset-password?email=${encodeURIComponent(
-      encodedEmail
-    )}&iv=${encodeURIComponent(iv.toString("base64"))}`;
+    const resetLink = `${baseClientUrl}/reset-password?${token}`;
 
     const subject = "Forgot password.";
 
