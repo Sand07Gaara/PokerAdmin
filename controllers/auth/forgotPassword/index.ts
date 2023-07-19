@@ -25,14 +25,15 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const secretKey = process.env.MANUAL_SECRET_KEY || "secret";
+    const secretKey = process.env.MANUAL_SECRET_KEY || "";
 
-    console.log(secretKey, '---secret')
+    const iv = crypto.randomBytes(16);
     
-    const encodedEmail = crypto
-      .createHmac("sha256", secretKey)
-      .update(email)
-      .digest("base64");
+    const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
+
+    let encodedEmail = cipher.update(email, "utf8", "base64");
+    
+    encodedEmail += cipher.final("base64");
 
     const url = baseClientUrl + "/api/" + `#${encodedEmail}`;
 

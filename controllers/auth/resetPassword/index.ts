@@ -15,12 +15,15 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
+    const iv = crypto.randomBytes(16);
+
     const secretKey = process.env.MANUAL_SECRET_KEY || "secret";
 
-    const decodedEmail = crypto
-      .createHmac("sha256", secretKey)
-      .update(encode)
-      .digest('base64');
+    const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
+
+    let decodedEmail = decipher.update(encode, "base64", "utf8");
+
+    decodedEmail += decipher.final("utf8");
 
     const user = await cosmos.findUserByEmail(decodedEmail);
 
