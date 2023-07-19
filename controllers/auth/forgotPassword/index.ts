@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { EmailClient } from "@azure/communication-email";
-
 import { randomBytes } from "crypto";
 
+const { sendEmail } = require("../../../utils/email");
 const bcrypt = require("bcrypt");
-
 const cosmos = require("../../../utils/cosmos");
+
+const { baseClientUrl } = require("../../../constants");
 
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
@@ -25,10 +25,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const container = await cosmos.getContainer("tournament");
-
-    const connection_string =
-      process.env.AZURE_COMMUNICATIONS_CONNECTION_STRING;
+    const container = await cosmos.getContainer("admin_user");
 
     // Generate a random 6-digit OTP code
     const otp = randomBytes(3).toString("hex").toUpperCase();
@@ -45,41 +42,49 @@ export const forgotPassword = async (req: Request, res: Response) => {
       .item(id)
       .replace(adminUser);
 
-    const client = new EmailClient(connection_string ? connection_string : "");
-    const subject = "Forgot Password";
-    const body = `<p>New OTP is ${otp}.</p>`;
+    const url = baseClientUrl + "/api";
 
-    type EmailAddress = {
-      address: string;
-    };
+    const subject = "Forgot password.";
 
-    type EmailRecipients = EmailAddress[];
+    const content = `<html>
+        <head>
+          <title></title>
+        </head>
+        <body>
+          <div class="container" style="height:500px;width:450px;border:1px solid silver;margin:0 auto">
+            <header style="height:200px;background-image: url('https://i.imgur.com/a1ItuWs.jpg');"></header>
+            <section style="height: 280px;background: #ecfaff">
+              <center>
+                <br>
+                <span style="font-size: 30px;font-family: arial;">OTP is ${otp}</span>
+                <br><br>
+              </center>
+            </section>
+            <footer style="height:100px;background: #ecfaff;text-align: center;font-family: arial;">
+              <center>
+                <br>
+                <div style="height: 40px; width: 150px; background-color: SlateBlue;">
+                  <div style="height: 10px"/>
+                  <a style="font-size: 15px; font-family: arial; color: white" href = ${url}>Reset Password</a>
+                </div>
+              </center>
+            </footer>
+          </div>
+        </body>
+      </html>`;
 
-    const options : any = {
-      content: {
-        subject,
-        body: {
-          contentType: "html",
-          content: body,
-        },
-        plainText: "",
-      },
-      senderAddress: "nadja@poker.com",
-      recipients: [
-        {
-          address: email,
-        },
-      ] as EmailRecipients, // Cast the array to the correct type
-    };
+    const emailRes = await sendEmail(email, subject, content);
 
-    const response = await client.beginSend(options);
-
-    console.log(response);
+    console.log(emailRes);
 
     return res.status(200).json({
       message: "OTP sent successfully",
     });
   } catch (error) {
     console.error("Error sending email:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      data: error,
+    });
   }
 };
