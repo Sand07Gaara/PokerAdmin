@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import crypto from "crypto";
+
 const bcrypt = require("bcrypt");
 
 const cosmos = require("../../../utils/cosmos");
@@ -13,7 +15,12 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const decodedEmail = Buffer.from(encode, 'base64').toString('ascii');
+    const secretKey = process.env.MANUAL_SECRET_KEY || "secret";
+
+    const decodedEmail = crypto
+      .createHmac("sha256", secretKey)
+      .update(encode)
+      .digest('base64');
 
     const user = await cosmos.findUserByEmail(decodedEmail);
 
@@ -32,9 +39,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     const { id } = user;
 
-    const { resource: updated_user } = await container
-      .item(id)
-      .replace(user);
+    const { resource: updated_user } = await container.item(id).replace(user);
 
     return res.status(200).json({
       message: "Successfully updated",
@@ -43,7 +48,7 @@ export const resetPassword = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",
-      data: error
+      data: error,
     });
   }
 };

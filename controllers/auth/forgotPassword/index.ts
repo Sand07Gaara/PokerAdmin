@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { randomBytes } from "crypto";
+import crypto from "crypto";
 
 const { sendEmail } = require("../../../utils/email");
 const bcrypt = require("bcrypt");
@@ -25,10 +25,14 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
+    const secretKey = process.env.MANUAL_SECRET_KEY || "secret";
 
-    const encodedEmail = Buffer.from(email).toString('base64');
-    // const hashedValue = await bcrypt.hash(email, salt);
+    console.log(secretKey, '---secret')
+    
+    const encodedEmail = crypto
+      .createHmac("sha256", secretKey)
+      .update(email)
+      .digest("base64");
 
     const url = baseClientUrl + "/api/" + `#${encodedEmail}`;
 

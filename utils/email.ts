@@ -1,7 +1,7 @@
 const { Sender } = require("node-mailjet");
 
 const EMAIL_API_KEY = process.env.EMAIL_API_KEY;
-const EMAIL_SECRET_KEY = process.env.EMAIL_API_KEY;
+const EMAIL_SECRET_KEY = process.env.EMAIL_SECRET_KEY;
 const { senderEmail } = require("../constants");
 
 const mailjet = require("node-mailjet").apiConnect(
