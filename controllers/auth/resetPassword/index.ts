@@ -1,19 +1,24 @@
 import { Request, Response } from 'express';
-import crypto from 'crypto';
+import jwt_decode from "jwt-decode";
 
 const bcrypt = require('bcrypt');
 const cosmos = require('../../../utils/cosmos');
 
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { encode, password } = req.body;
 
-    if (!email || !password ) {
+    if (!encode || !password ) {
       return res.status(400).json({
         message: 'password is required',
       });
     }
 
+    const data : any = jwt_decode(encode);
+
+    const email = data.email;
+
+    console.log(email);
     const user = await cosmos.findUserByEmail(email);
 
     if (!user) {

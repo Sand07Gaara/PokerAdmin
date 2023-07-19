@@ -31,20 +31,15 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     const content = `<html>
         <head>
-          <title></title>
+          <title> Password reset url is here.</title>
         </head>
         <body>
-          <div class="container" style="height:100px;width:450px;border:1px solid silver;margin:0 auto">
-            <footer style="height:100px;background: #ecfaff;text-align: center;font-family: arial;">
-              <center>
-                <br>
-                <div style="height: 40px; width: 150px; background-color: SlateBlue;">
-                  <div style="height: 10px"/>
-                  <a style="font-size: 15px; font-family: arial; color: white" href="${resetLink}">Reset Password</a>
-                </div>
-              </center>
-            </footer>
+          <div>
+            ${resetLink}
           </div>
+          <div>
+           This will be expired in 10 minutes.
+        </div>
         </body>
       </html>`;
 
