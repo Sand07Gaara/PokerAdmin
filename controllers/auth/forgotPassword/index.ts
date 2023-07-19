@@ -25,24 +25,12 @@ export const forgotPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const container = await cosmos.getContainer("admin_user");
-
-    // Generate a random 6-digit OTP code
-    const otp = randomBytes(3).toString("hex").toUpperCase();
-
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(otp, salt);
 
-    adminUser.password = hashedPassword;
-    // TODO: Store the OTP code in a database or cache
+    const encodedEmail = Buffer.from(email).toString('base64');
+    // const hashedValue = await bcrypt.hash(email, salt);
 
-    const { id } = adminUser;
-
-    const { resource: updated_user } = await container
-      .item(id)
-      .replace(adminUser);
-
-    const url = baseClientUrl + "/api";
+    const url = baseClientUrl + "/api/" + `#${encodedEmail}`;
 
     const subject = "Forgot password.";
 
@@ -51,15 +39,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
           <title></title>
         </head>
         <body>
-          <div class="container" style="height:500px;width:450px;border:1px solid silver;margin:0 auto">
-            <header style="height:200px;background-image: url('https://i.imgur.com/a1ItuWs.jpg');"></header>
-            <section style="height: 280px;background: #ecfaff">
-              <center>
-                <br>
-                <span style="font-size: 30px;font-family: arial;">OTP is ${otp}</span>
-                <br><br>
-              </center>
-            </section>
+          <div class="container" style="height:100px;width:450px;border:1px solid silver;margin:0 auto">
             <footer style="height:100px;background: #ecfaff;text-align: center;font-family: arial;">
               <center>
                 <br>
@@ -73,15 +53,22 @@ export const forgotPassword = async (req: Request, res: Response) => {
         </body>
       </html>`;
 
-    const emailRes = await sendEmail(email, subject, content);
+    const emailRes = await sendEmail(
+      "esaibrilliant34310@gmail.com",
+      subject,
+      content
+    );
 
-    console.log(emailRes);
-
-    return res.status(200).json({
-      message: "OTP sent successfully",
-    });
+    if (emailRes == 200) {
+      return res.status(200).json({
+        message: "Sent successfully",
+      });
+    } else {
+      return res.status(401).json({
+        message: "Send email error",
+      });
+    }
   } catch (error) {
-    console.error("Error sending email:", error);
     return res.status(500).json({
       message: "Internal server error",
       data: error,
