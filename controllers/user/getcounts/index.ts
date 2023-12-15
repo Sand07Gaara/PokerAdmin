@@ -78,7 +78,8 @@ export const getCounts = async (req: Request, res: Response) => {
         },
       },
     ]).toArray();
-
+// res.staus(200).json({});
+    
     res.status(200).json({
       today: result[0].today[0]?.count || 0,
       thisWeek: result[0].thisWeek[0]?.count || 0,
